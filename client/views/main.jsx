@@ -9,9 +9,12 @@ const login = () => {
 MainLayout = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
-    return {
-      user: Meteor.user()
-    };
+    let data = {};
+    let handle = Meteor.subscribe("userData");
+    if (handle.ready()) {
+      data.user = Meteor.user();
+    }
+    return data;
   },
   getLogoutButton() {
     return <span>
