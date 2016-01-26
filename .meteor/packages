@@ -20,3 +20,7 @@ kadira:flow-router
 kadira:react-layout
 react
 auth0:lock
+aldeed:autoform
+aldeed:simple-schema
+check
+meteorhacks:subs-manager

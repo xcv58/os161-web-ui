@@ -14,9 +14,11 @@ FlowRouter.route("/", {
 
 FlowRouter.route("/profile", {
   name: "profile",
-  action: function() {
+  action: function(params, queryParams) {
+    console.log("params:", params);
+    console.log("queryParams:", queryParams);
     ReactLayout.render(MainLayout, {
-      content: <ProfileComponent/>
+      content: <ProfileComponent query={queryParams} />
     });
   }
 });

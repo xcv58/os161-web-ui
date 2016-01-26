@@ -1,45 +1,22 @@
-const logout = () => {
-  Meteor.logout();
-};
-
-const login = () => {
-  lock.show();
-};
-
 MainLayout = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
     let data = {};
-    let handle = Meteor.subscribe("userData");
+    let handle = UserSubs.subscribe("userData");
     if (handle.ready()) {
       data.user = Meteor.user();
     }
     return data;
   },
-  getLogoutButton() {
-    return <span>
-      &nbsp;
-      <button onClick={logout}>Logout</button>
-    </span>
-  },
-  getLoginButton() {
-    return <span>
-      &nbsp;
-      <button onClick={login}>Login</button>
-    </span>
-  },
   render() {
-    console.log(this.props.user);
+    const content = this.data.user ? this.props.content : <LoginComponent />;
     return <div>
       <header>
         This is our header
       </header>
-      <p>
-        Navigation:&nbsp;<a href="/">Home</a>
-        {this.data.user ? this.getLogoutButton() : this.getLoginButton()}
-      </p>
+      <NavigationComponent user={this.data.user} />
       <main>
-        {this.data.user ? this.props.content : <LoginComponent />}
+        {content }
       </main>
       <footer>
         This is our footer
@@ -60,16 +37,6 @@ WelcomeComponent = React.createClass({
       <h1>Hello,
       &nbsp;
       {this.data.user ? this.data.user.services.auth0.name : 'guest'}
-      </h1>
-    </div>
-  }
-});
-
-ProfileComponent = React.createClass({
-  render() {
-    return <div>
-      <h1>Hello,
-      &nbsp;
       </h1>
     </div>
   }
