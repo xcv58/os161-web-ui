@@ -1,6 +1,10 @@
 NavigationComponent = React.createClass({
   componentDidMount() {
-    $(".button-collapse").sideNav();
+    $(".button-collapse").sideNav({
+      menuWidth: 300,
+      edge: 'right',
+      closeOnClick: true
+    });
   },
   getLoginOutButton(user) {
     const className = "waves-effect waves-light btn";
@@ -59,7 +63,7 @@ NavigationComponent = React.createClass({
     return (
       <nav>
         <div className="nav-wrapper">
-          <a href="#" data-activates="mobile-demo" className="button-collapse">
+          <a href="#" data-activates="mobile-demo" className="button-collapse right">
             <i className="material-icons">menu</i>
           </a>
           <a className="brand-logo" href="/">CSE 421/521</a>
