@@ -3,19 +3,19 @@
     <div class="input-field col s6">
         {{#if profile.firstname}}
             <input id="first_name" pattern=".{2,}" required type="text" name="firstname" value={{profile.firstname}} class="validate">
-            <label for="first_name" class="active">First Name</label>
+            <label for="first_name" data-error="Too short!" class="active">First Name</label>
         {{else}}
             <input id="first_name" pattern=".{2,}" required type="text" name="firstname" class="validate">
-            <label for="first_name">First Name</label>
+            <label for="first_name" data-error="Too short!">First Name</label>
         {{/if}}
     </div>
     <div class="input-field col s6">
         {{#if profile.lastname}}
             <input id="last_name" pattern=".{2,}" required type="text" name="lastname" value={{profile.lastname}} class="validate">
-            <label for="last_name" class="active">Last Name</label>
+            <label for="last_name" data-error="Too short!" class="active">Last Name</label>
         {{else}}
             <input id="last_name" pattern=".{2,}" required type="text" name="lastname" class="validate">
-            <label for="last_name">Last Name</label>
+            <label for="last_name" data-error="Too short!">Last Name</label>
         {{/if}}
     </div>
   </div>
