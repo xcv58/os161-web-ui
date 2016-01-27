@@ -38,14 +38,16 @@ EditProfileComponent = React.createClass({
     const profile = user && user.profile;
     const {email, name, picture} = user.services.auth0;
     let {firstname = "First name", lastname = "Last name"} = profile || {};
-    return <div>
-    <p>{email}</p>
-    <input type="text" ref="firstname" placeholder={firstname} />
-    <br/>
-    <input type="text" ref="lastname" placeholder={lastname} />
-    <br/>
-    <button onClick={this.save}>Save</button>
-    </div>
+    return (
+      <div>
+        <p>{email}</p>
+        <input type="text" ref="firstname" placeholder={firstname} />
+        <br/>
+        <input type="text" ref="lastname" placeholder={lastname} />
+        <br/>
+        <button onClick={this.save}>Save</button>
+      </div>
+    );
   }
 });
 
@@ -57,11 +59,13 @@ ShowProfileComponent = React.createClass({
     const user = this.props.user;
     console.log("show");
     const {email, name, picture} = user.services.auth0;
-    return <div>
-    <image src={picture} />
-    <p>{user.profile.firstname} {user.profile.lastname}</p>
-    <p>{email}</p>
-    <button onClick={this.edit}>Edit Profile</button>
-    </div>
+    return (
+      <div>
+        <image src={picture} />
+        <p>{user.profile.firstname} {user.profile.lastname}</p>
+        <p>{email}</p>
+        <button onClick={this.edit}>Edit Profile</button>
+      </div>
+    );
   }
 })
