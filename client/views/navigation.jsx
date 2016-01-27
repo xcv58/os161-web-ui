@@ -1,17 +1,22 @@
 NavigationComponent = React.createClass({
-  getLogoutButton() {
-    return (
-      <li>
-        <a onClick={logout}>Logout</a>
-      </li>
-    );
+  componentDidMount() {
+    $(".button-collapse").sideNav();
   },
-  getLoginButton() {
-    return (
-      <li>
-        <a href="" onClick={login}>Login</a>
-      </li>
-    );
+  getLoginOutButton(user) {
+    const className = "waves-effect waves-light btn";
+    if (user) {
+      return (
+        <li onClick={logout}>
+          <a className={className}>Logout</a>
+        </li>
+      );
+    } else {
+      return (
+        <li onClick={login}>
+          <a className={className}>Login</a>
+        </li>
+      );
+    }
   },
   render() {
     const user = this.props.user;
@@ -20,9 +25,12 @@ NavigationComponent = React.createClass({
     ];
     const {path, context: {pathname}} = FlowRouter.current();
     if (user) {
+      const profile = {name: "Profile", href: "/profile"};
+      if (!user.profile) {
+        profile.newBadge = 1;
+      }
       navbarLinks.push(
-        {name: "Profile", href: "/profile"},
-        {},
+        profile,
         {name: "ASST0", href: "/asst0"},
         {name: "ASST1", href: "/asst1"},
         {name: "ASST2", href: "/asst2"},
@@ -30,11 +38,14 @@ NavigationComponent = React.createClass({
       );
     }
     const links = navbarLinks.map((link) => {
-      const {name, href} = link;
+      const {name, href, newBadge} = link;
       if (name) {
         return (
           <li className={pathname === href ? "active" : null}>
-          <a href={href}>{name}</a>
+            <a href={href}>
+              {name}
+              {newBadge ? <span className="new badge">{newBadge}</span> : null}
+            </a>
           </li>
         );
       } else {
@@ -43,7 +54,24 @@ NavigationComponent = React.createClass({
         )
       }
     });
-
+    const loginOutButton = this.getLoginOutButton(this.props.user);
+    links.push(loginOutButton);
+    return (
+      <nav>
+        <div className="nav-wrapper">
+          <a href="#" data-activates="mobile-demo" className="button-collapse">
+            <i className="material-icons">menu</i>
+          </a>
+          <a className="brand-logo" href="/">CSE 421/521</a>
+          <ul className="right hide-on-med-and-down">
+            {links}
+          </ul>
+          <ul className="side-nav" id="mobile-demo">
+            {links}
+          </ul>
+        </div>
+      </nav>
+    );
     return (
       <nav className="navbar navbar-default" role="navigation">
         <div className="container-fluid">

@@ -17,44 +17,46 @@ ProfileComponent = React.createClass({
 });
 
 EditProfileComponent = React.createClass({
-  save() {
-    let {firstname, lastname} = this.refs;
-    const profile = {
-      firstname: firstname.value,
-      lastname: lastname.value
-    };
-    Meteor.call("updateProfile", profile, (err, res) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(res);
-        FlowRouter.go("/profile");
-      }
-    });
+  componentDidMount() {
+    editProfile();
   },
   render() {
-    console.log("edit");
-    const user = this.props.user;
-    const profile = user && user.profile;
-    const {email, name, picture} = user.services.auth0;
-    let {firstname = "First name", lastname = "Last name"} = profile || {};
     return (
       <div>
-        <p>{email}</p>
-        <input type="text" ref="firstname" placeholder={firstname} />
-        <br/>
-        <input type="text" ref="lastname" placeholder={lastname} />
-        <br/>
-        <button onClick={this.save}>Save</button>
+        <a onClick={editProfile} className="btn waves-effect waves-light">
+          Edit Profile<i className="material-icons right">perm_identity</i>
+        </a>
       </div>
     );
   }
 });
 
+const editProfile = function() {
+  MaterializeModal.form({
+    title: "Update your profile!",
+    bodyTemplate: "profile",
+    callback: function(error, response) {
+      if (response.submit) {
+        const {firstname, lastname} = response.form;
+        const profile = {
+          firstname: firstname,
+          lastname: lastname
+        };
+        Meteor.call("updateProfile", profile, (err, res) => {
+          if (err) {
+            Materialize.toast(err, 5000, "red");
+          } else {
+            Materialize.toast(`updated ${firstname} ${lastname}`, 5000, "green");
+          }
+        });
+      } else {
+        Materialize.toast("Cancelled by user!", 5000, "red");
+      }
+    }
+  });
+}
+
 ShowProfileComponent = React.createClass({
-  edit() {
-    FlowRouter.go("/profile?edit=1");
-  },
   render() {
     const user = this.props.user;
     console.log("show");
@@ -64,8 +66,23 @@ ShowProfileComponent = React.createClass({
         <image src={picture} />
         <p>{user.profile.firstname} {user.profile.lastname}</p>
         <p>{email}</p>
-        <button onClick={this.edit}>Edit Profile</button>
+        <button onClick={editProfile}>Edit Profile</button>
       </div>
     );
   }
 })
+
+Template.profile.helpers({
+  profile: function() {
+    const user = Meteor.user();
+    const profile = user && user.profile;
+    const {email, name, picture} = user.services.auth0;
+    let {firstname, lastname} = profile || {};
+    console.log(firstname, lastname);
+    return {
+      firstname: firstname,
+      lastname: lastname,
+      email: email
+    };
+  }
+});

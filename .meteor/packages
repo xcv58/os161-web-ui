@@ -24,5 +24,7 @@ aldeed:autoform
 aldeed:simple-schema
 check
 meteorhacks:subs-manager
-twbs:bootstrap
-less
+meteorstuff:materialize-modal
+materialize:materialize
+fourseven:scss
+meteortoys:allthings
