@@ -9,7 +9,9 @@ MainLayout = React.createClass({
       <div>
         <NavigationComponent user={this.data.user} />
         <main>
-          {content }
+          <div className="container">
+            {content}
+          </div>
         </main>
         <footer>
           This is our footer
