@@ -1,16 +1,7 @@
-const editProfile = function() {
-  FlowRouter.go("/profile?edit=1");
-};
-
 ProfileComponent = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
-    let data = {};
-    let handle = UserSubs.subscribe("userData");
-    if (handle.ready()) {
-      data.user = Meteor.user();
-    }
-    return data;
+    return subscribeUserData();
   },
   render() {
     let user = this.data.user;
@@ -60,13 +51,14 @@ EditProfileComponent = React.createClass({
 
 ShowProfileComponent = React.createClass({
   edit() {
-    editProfile();
+    FlowRouter.go("/profile?edit=1");
   },
   render() {
     const user = this.props.user;
     console.log("show");
     const {email, name, picture} = user.services.auth0;
     return <div>
+    <image src={picture} />
     <p>{user.profile.firstname} {user.profile.lastname}</p>
     <p>{email}</p>
     <button onClick={this.edit}>Edit Profile</button>

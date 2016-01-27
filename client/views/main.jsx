@@ -1,12 +1,7 @@
 MainLayout = React.createClass({
   mixins: [ReactMeteorData],
   getMeteorData() {
-    let data = {};
-    let handle = UserSubs.subscribe("userData");
-    if (handle.ready()) {
-      data.user = Meteor.user();
-    }
-    return data;
+    return subscribeUserData();
   },
   render() {
     const content = this.data.user ? this.props.content : <LoginComponent />;
