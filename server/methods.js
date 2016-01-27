@@ -1,8 +1,3 @@
-const ProfileSchema = new SimpleSchema({
-  firstname: { type: String },
-  lastname: { type: String }
-});
-
 Meteor.methods({
   "updateProfile": function(profile) {
     if (!this.userId) {

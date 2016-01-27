@@ -36,22 +36,30 @@ const editProfile = function() {
     title: "Update your profile!",
     bodyTemplate: "profile",
     callback: function(error, response) {
-      if (response.submit) {
-        const {firstname, lastname} = response.form;
-        const profile = {
-          firstname: firstname,
-          lastname: lastname
-        };
-        Meteor.call("updateProfile", profile, (err, res) => {
-          if (err) {
-            Materialize.toast(err, 5000, "red");
-          } else {
-            Materialize.toast(`updated ${firstname} ${lastname}`, 5000, "green");
-          }
-        });
-      } else {
+      if (!response.submit) {
         Materialize.toast("Cancelled by user!", 5000, "red");
+        return;
       }
+      const {firstname, lastname} = response.form;
+      const profile = {
+        firstname: firstname,
+        lastname: lastname
+      };
+      try {
+        check(profile, ProfileSchema);
+      } catch (exception) {
+        Materialize.toast(exception.message, 5000, "red");
+        throw exception;
+      }
+
+      Meteor.call("updateProfile", profile, (err, res) => {
+        if (err) {
+          console.log(err);
+          Materialize.toast(`${err.reason}`, 5000, "red");
+        } else {
+          Materialize.toast(`updated ${firstname} ${lastname}`, 5000, "green");
+        }
+      });
     }
   });
 }
@@ -59,7 +67,6 @@ const editProfile = function() {
 ShowProfileComponent = React.createClass({
   render() {
     const user = this.props.user;
-    console.log("show");
     const {email, name, picture} = user.services.auth0;
     return (
       <div>
@@ -78,7 +85,6 @@ Template.profile.helpers({
     const profile = user && user.profile;
     const {email, name, picture} = user.services.auth0;
     let {firstname, lastname} = profile || {};
-    console.log(firstname, lastname);
     return {
       firstname: firstname,
       lastname: lastname,
