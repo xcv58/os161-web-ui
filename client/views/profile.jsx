@@ -144,7 +144,7 @@ ShowProfileComponent = React.createClass({
       <div className="row">
         <div className="col s12 m12 l4">
           <div className="center-align">
-            <image src={picture} style={profileItemStyle} className="center-align circle z-depth-2" />
+            <image src={picture} style={profileItemStyle} className="avatar center-align circle z-depth-2" />
             <p style={profileItemStyle} className={itemClass}>
               {user.profile.firstname} {user.profile.lastname}
             </p>
