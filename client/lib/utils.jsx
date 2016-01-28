@@ -1,10 +1,11 @@
 UserSubs = new SubsManager();
 
 subscribeUserData = function() {
-    const data = {};
+    const data = {ready: false};
     const handle = UserSubs.subscribe("userData");
     if (handle.ready()) {
       data.user = Meteor.user();
+      data.ready = true;
     }
     return data;
 }

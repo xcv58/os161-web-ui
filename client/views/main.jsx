@@ -4,6 +4,9 @@ MainLayout = React.createClass({
     return subscribeUserData();
   },
   render() {
+    if (!this.data.ready) {
+      return (<LoadingComponent />);
+    }
     const content = this.data.user ? this.props.content : <LoginComponent />;
     return (
       <div>
@@ -43,9 +46,27 @@ WelcomeComponent = React.createClass({
 LoginComponent = React.createClass({
   render() {
     return (
-      <div>
-        <button onClick={login}>Login</button>
+      <div className="row">
+        <div className="col s12">
+          <div className="center-align">
+            <a onClick={login} className="btn-large waves-effect waves-light">
+              Login<i className="material-icons right">group</i>
+            </a>
+          </div>
+        </div>
       </div>
     );
   }
 });
+
+LoadingComponent = React.createClass({
+  render() {
+    return (
+      <div className="row">
+        <div className="progress">
+          <div className="indeterminate"></div>
+          </div>
+      </div>
+    );
+  }
+})

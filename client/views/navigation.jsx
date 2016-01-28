@@ -42,24 +42,9 @@ NavigationComponent = React.createClass({
       );
     }
     const links = navbarLinks.map((link) => {
-      const {name, href, newBadge} = link;
-      if (name) {
-        return (
-          <li className={pathname === href ? "active" : null}>
-            <a href={href}>
-              {name}
-              {newBadge ? <span className="new badge">{newBadge}</span> : null}
-            </a>
-          </li>
-        );
-      } else {
-        return (
-          <li className="divider-vertical"></li>
-        )
-      }
+      return (<NavLinkComponent key={link.name} link={link} pathname={pathname}/>);
     });
     const loginOutButton = this.getLoginOutButton(this.props.user);
-    links.push(loginOutButton);
     return (
       <nav>
         <div className="nav-wrapper">
@@ -69,35 +54,28 @@ NavigationComponent = React.createClass({
           <a className="brand-logo" href="/">CSE 421/521</a>
           <ul className="right hide-on-med-and-down">
             {links}
+            {loginOutButton}
           </ul>
           <ul className="side-nav" id="mobile-demo">
             {links}
+            {loginOutButton}
           </ul>
         </div>
       </nav>
     );
+  }
+});
+
+NavLinkComponent = React.createClass({
+  render() {
+    const {name, href, newBadge} = this.props.link;
     return (
-      <nav className="navbar navbar-default" role="navigation">
-        <div className="container-fluid">
-          <div className="navbar-header">
-            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-              <span className="sr-only">Toggle navigation</span>
-              <span className="icon-bar"></span>
-              <span className="icon-bar"></span>
-              <span className="icon-bar"></span>
-              </button>
-              <a className="navbar-brand" href="/">CSE 421/521</a>
-          </div>
-          <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul className="nav navbar-nav">
-              {links}
-            </ul>
-            <ul className="nav navbar-nav navbar-right">
-              {this.props.user ? this.getLogoutButton() : this.getLoginButton()}
-            </ul>
-          </div>
-        </div>
-      </nav>
+      <li className={this.props.pathname === href ? "active" : null}>
+        <a href={href}>
+          {name}
+          {newBadge ? <span className="new badge">{newBadge}</span> : null}
+        </a>
+      </li>
     );
   }
 });

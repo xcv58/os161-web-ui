@@ -1,0 +1,21 @@
+<template name="create-group">
+  <div class="row">
+    <div class="input-field col s12">
+      <input pattern=".{3,}" required type="text" name="groupname" class="validate">
+      <label for="groupname" data-error="Too short!" class="active">Group Name</label>
+    </div>
+  </div>
+</template>
+
+<template name="join-group">
+  <div class="row">
+    <div class="input-field col s12">
+      <input pattern=".{3,}" required type="text" name="groupname" class="validate">
+      <label for="groupname" data-error="Too short!" class="active">Group Name</label>
+    </div>
+    <div class="input-field col s12">
+      <input pattern=".{32,32}" required type="text" name="token" length="32" class="validate">
+      <label for="token" data-error="Invalid_Token!" class="active">Token</label>
+    </div>
+  </div>
+</template>

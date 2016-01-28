@@ -7,7 +7,12 @@ ProfileSchema = new SimpleSchema({
 });
 
 GroupSchema = new SimpleSchema({
+  _id: { type: String, optional: true },
   name: { type: String, min: 3, max: 1000 },
   members: { type: [String], min: 3, max: 1000, minCount: 1, maxCount: 2 },
-  visible: { type: Boolean }
+  token: { type: String, min: 32, max: 32 },
+  hide: { type: Boolean, optional: true }
 });
+
+GroupNameSchema = GroupSchema.pick(['name']);
+GroupTokenSchema = GroupSchema.pick(['token']);
