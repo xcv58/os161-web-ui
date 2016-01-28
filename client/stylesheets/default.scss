@@ -11,7 +11,8 @@ main .btn {
     margin-bottom: $minor-margin;
 }
 
-main .avatar  {
+main .avatar-large  {
     margin-top: $minor-margin;
     margin-bottom: $minor-margin;
+    max-width: 120px;
 }

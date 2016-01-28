@@ -5,10 +5,10 @@ MemberComponent = React.createClass({
     const {email, name, picture} = user.services.auth0;
     return (
       <li className="collection-item avatar">
-      <img src={picture} alt="" className="circle" />
+      <img src={picture} alt={email} className="circle" />
       <span className="title">{firstname} {lastname}</span>
+      <a href="#!" className="secondary-content"></a>
       <p>{email}</p>
-      <a href="#!" className="secondary-content"><i className="material-icons">grade</i></a>
       </li>
     );
   }
