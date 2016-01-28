@@ -13,11 +13,13 @@ const checkNotInGroup = (userId) => {
 
 Meteor.methods({
   "updateProfile": function(profile) {
+    // Meteor._sleepForMs(3000); //to simulate longer response sleep for 2 seconds
     checkLogin(this.userId);
     check(profile, ProfileSchema);
     return Meteor.users.update(this.userId, {$set: {"profile": profile}});
   },
   "createGroup": function(name) {
+    // Meteor._sleepForMs(3000); //to simulate longer response sleep for 2 seconds
     checkLogin(this.userId);
     checkNotInGroup(this.userId);
     // TODO: make sure user is not in a group
@@ -33,6 +35,7 @@ Meteor.methods({
     return insertGroup(group);
   },
   "joinGroup": function(name, token) {
+    // Meteor._sleepForMs(3000); //to simulate longer response sleep for 2 seconds
     const {userId} = this;
     checkLogin(userId);
     checkNotInGroup(userId);
@@ -51,6 +54,7 @@ Meteor.methods({
     return Groups.update(group._id, group);
   },
   "leaveGroup": function() {
+    // Meteor._sleepForMs(3000); //to simulate longer response sleep for 2 seconds
     const userId = this.userId;
     checkLogin(userId);
     const group = findOneGroupByUserId(userId);

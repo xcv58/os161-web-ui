@@ -17,3 +17,15 @@ logout = () => {
 login = () => {
   lock.show();
 };
+
+MeteorCallMixin = {
+  getInitialState() {
+    return {clicked: false};
+  },
+  clicked() {
+    this.setState({clicked: true});
+  },
+  reset() {
+    this.setState({clicked: false});
+  }
+};

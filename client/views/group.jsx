@@ -1,89 +1,3 @@
-const createGroup = function() {
-  MaterializeModal.form({
-    title: "Create new group!",
-    bodyTemplate: "create-group",
-    callback: function(error, response) {
-      if (!response.submit) {
-        Materialize.toast("Cancelled by user!", 5000, "red");
-        return;
-      }
-      const {groupname} = response.form;
-      console.log("group name:", groupname);
-      try {
-        check({name: groupname}, GroupNameSchema);
-      } catch (exception) {
-        Materialize.toast(exception.message, 5000, "red");
-        throw exception;
-      }
-
-      Meteor.call("createGroup", groupname, (err, res) => {
-        if (err) {
-          console.log(err);
-          Materialize.toast(`${err.reason}`, 5000, "red");
-        } else {
-          Materialize.toast(`Create group ${groupname}!`, 5000, "green");
-        }
-      });
-    }
-  });
-};
-
-const joinGroup = function() {
-  MaterializeModal.form({
-    title: "Join group!",
-    bodyTemplate: "join-group",
-    callback: function(error, response) {
-      if (!response.submit) {
-        Materialize.toast("Cancelled by user!", 5000, "red");
-        return;
-      }
-      const {groupname, token} = response.form;
-      callJoinGroup(groupname, token);
-      // Meteor.call("joinGroup", groupname, token, (err, res) => {
-      //   if (err) {
-      //     console.log(err);
-      //     Materialize.toast(`${err.reason}`, 5000, "red");
-      //   } else {
-      //     Materialize.toast(`Join group ${groupname}!`, 5000, "green");
-      //   }
-      // });
-    }
-  });
-};
-
-const callJoinGroup = function(groupname, token) {
-  try {
-    check({name: groupname}, GroupNameSchema);
-    check({token: token}, GroupTokenSchema);
-  } catch (exception) {
-    Materialize.toast(exception.message, 5000, "red");
-    throw exception;
-  }
-
-  Meteor.call("joinGroup", groupname, token, (err, res) => {
-    if (err) {
-      console.log(err);
-      Materialize.toast(`${err.reason}`, 5000, "red");
-    } else {
-      Materialize.toast(`Join group ${groupname}!`, 5000, "green");
-    }
-  });
-}
-
-const leaveGroup = function() {
-  console.log("leaveGroup");
-  Meteor.call("leaveGroup", (err, res) => {
-    if (err) {
-      console.log(err);
-      Materialize.toast(`${err.reason}`, 5000, "red");
-    } else {
-      console.log(res);
-      UserSubs.reset();
-      // Materialize.toast(`updated ${firstname} ${lastname}`, 5000, "green");
-    }
-  });
-};
-
 MemberComponent = React.createClass({
   render() {
     const user = this.props.user;
@@ -101,7 +15,7 @@ MemberComponent = React.createClass({
 });
 
 GroupInfoComponent = React.createClass({
-  mixins: [ReactMeteorData],
+  mixins: [ReactMeteorData, MeteorCallMixin],
   getMeteorData() {
     const group = this.props.group;
     const data = {users: [], ready: false};
@@ -111,6 +25,19 @@ GroupInfoComponent = React.createClass({
       data.ready = true;
     }
     return data;
+  },
+  leaveGroup() {
+    this.clicked();
+    Meteor.call("leaveGroup", (err, res) => {
+      this.reset();
+      if (err) {
+        console.log(err);
+        Materialize.toast(`${err.reason}`, 5000, "red");
+      } else {
+        console.log(res);
+        Materialize.toast(`You leaves group ${this.props.group.name}`, 5000, "green");
+      }
+    });
   },
   onMouseEnter(event) {
     const target = event.target;
@@ -141,8 +68,19 @@ GroupInfoComponent = React.createClass({
         <MemberComponent key={user._id} user={user} />
       );
     });
+    const leaveGroupButton = (
+      <div className="col s12 m12 l12">
+        <button disabled={this.state.clicked}
+                onClick={this.leaveGroup}
+                style={profileItemStyle}
+                className="waves-effect waves-light btn z-depth-2 red">
+          Leave Group
+        </button>
+      </div>
+    )
     return (
       <div className="col s12 m12 l8">
+        {this.state.clicked ? <LoadingComponent /> : null}
         <div className="input-fields col s12 m12 l12">
           <label htmlFor="groupname" className="active">Group Name</label>
           <input onMouseEnter={this.onMouseEnter} onChange={this.onChange}
@@ -160,14 +98,113 @@ GroupInfoComponent = React.createClass({
         </div>
         {invite}
         <div className="row center-align">
-          <div className="col s12 m12 l12">
-            <button onClick={leaveGroup} style={profileItemStyle} className="waves-effect waves-light btn z-depth-2 red">
-              Leave Group
-            </button>
-          </div>
+          {leaveGroupButton}
         </div>
       </div>
     );
+  }
+});
+
+CreateJoinGroupComponent = React.createClass({
+  mixins: [MeteorCallMixin],
+  componentDidMount() {
+    const {params, queryParams} = FlowRouter.current();
+    const {groupname, token} = queryParams;
+    if (groupname && token) {
+      this.callJoinGroup(groupname, token);
+    }
+  },
+  createGroup() {
+    MaterializeModal.form({
+      title: "Create new group!",
+      bodyTemplate: "create-group",
+      callback: (error, response) => {
+        if (!response.submit) {
+          Materialize.toast("Cancelled by user!", 5000, "red");
+          this.reset();
+          return;
+        }
+        const {groupname} = response.form;
+        console.log("group name:", groupname);
+        try {
+          check({name: groupname}, GroupNameSchema);
+        } catch (exception) {
+          Materialize.toast(exception.message, 5000, "red");
+          throw exception;
+        }
+
+        this.clicked();
+        Meteor.call("createGroup", groupname, (err, res) => {
+          this.reset();
+          if (err) {
+            console.log(err);
+            Materialize.toast(`${err.reason}`, 5000, "red");
+          } else {
+            Materialize.toast(`Create group ${groupname}!`, 5000, "green");
+          }
+        });
+      }
+    });
+  },
+  joinGroup() {
+    MaterializeModal.form({
+      title: "Join group!",
+      bodyTemplate: "join-group",
+      callback: (error, response) => {
+        if (!response.submit) {
+          Materialize.toast("Cancelled by user!", 5000, "red");
+          this.reset();
+          return;
+        }
+        const {groupname, token} = response.form;
+        this.callJoinGroup(groupname, token);
+      }
+    });
+  },
+  callJoinGroup(groupname, token) {
+    try {
+      check({name: groupname}, GroupNameSchema);
+      check({token: token}, GroupTokenSchema);
+    } catch (exception) {
+      Materialize.toast(exception.message, 5000, "red");
+      throw exception;
+    }
+
+    this.clicked();
+    Meteor.call("joinGroup", groupname, token, (err, res) => {
+      this.reset();
+      if (err) {
+        console.log(err);
+        Materialize.toast(`${err.reason}`, 5000, "red");
+      } else {
+        Materialize.toast(`Join group ${groupname}!`, 5000, "green");
+      }
+    });
+  },
+  render() {
+    return (
+        <div className="col s12 m12 l8">
+          {this.state.clicked ? <LoadingComponent /> : null}
+          <div className="row center-align">
+            <div className="col s12 m12 l6">
+              <button disabled={this.state.clicked}
+                      onClick={this.createGroup}
+                      style={profileItemStyle}
+                      className="waves-effect waves-light btn z-depth-2">
+                Create a group
+              </button>
+            </div>
+            <div className="col s12 m12 l6">
+              <button disabled={this.state.clicked}
+                      onClick={this.joinGroup}
+                      style={profileItemStyle}
+                      className="waves-effect waves-light btn z-depth-2">
+                Join a group
+              </button>
+            </div>
+          </div>
+        </div>
+      );
   }
 })
 
@@ -183,20 +220,6 @@ GroupComponent = React.createClass({
     }
     return data;
   },
-  componentDidMount() {
-    if (!this.data.ready) {
-      return;
-    }
-    if (!this.data.group) {
-      const {params, queryParams} = FlowRouter.current();
-      const {groupname, token} = queryParams;
-      if (groupname && token) {
-        callJoinGroup(groupname, token);
-      }
-    } else {
-      FlowRouter.go("/profile");
-    }
-  },
   render() {
     if (!this.data.ready) {
       return (
@@ -207,25 +230,9 @@ GroupComponent = React.createClass({
     }
     const user = this.props.user;
     if (this.data.group) {
-      return (
-        <GroupInfoComponent group={this.data.group} />
-      );
+      return <GroupInfoComponent group={this.data.group} />
+    } else {
+      return <CreateJoinGroupComponent user={user}/>
     }
-    return (
-        <div className="col s12 m12 l8">
-          <div className="row center-align">
-            <div className="col s12 m12 l6">
-              <button onClick={createGroup} style={profileItemStyle} className="waves-effect waves-light btn z-depth-2">
-                Create a group
-              </button>
-            </div>
-            <div className="col s12 m12 l6">
-              <button onClick={joinGroup} style={profileItemStyle} className="waves-effect waves-light btn z-depth-2">
-                Join a group
-              </button>
-            </div>
-          </div>
-        </div>
-      );
   }
 });

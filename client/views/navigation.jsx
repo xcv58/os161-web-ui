@@ -1,26 +1,10 @@
 NavigationComponent = React.createClass({
   componentDidMount() {
     $(".button-collapse").sideNav({
-      menuWidth: 300,
+      menuWidth: 240,
       edge: 'right',
       closeOnClick: true
     });
-  },
-  getLoginOutButton(user) {
-    const className = "waves-effect waves-light btn";
-    if (user) {
-      return (
-        <li onClick={logout}>
-          <a className={className}>Logout</a>
-        </li>
-      );
-    } else {
-      return (
-        <li onClick={login}>
-          <a className={className}>Login</a>
-        </li>
-      );
-    }
   },
   render() {
     const user = this.props.user;
@@ -44,7 +28,6 @@ NavigationComponent = React.createClass({
     const links = navbarLinks.map((link) => {
       return (<NavLinkComponent key={link.name} link={link} pathname={pathname}/>);
     });
-    const loginOutButton = this.getLoginOutButton(this.props.user);
     return (
       <nav>
         <div className="nav-wrapper">
@@ -54,11 +37,11 @@ NavigationComponent = React.createClass({
           <a className="brand-logo" href="/">CSE 421/521</a>
           <ul className="right hide-on-med-and-down">
             {links}
-            {loginOutButton}
+            <LoginOutComponent user={user}/>
           </ul>
           <ul className="side-nav" id="mobile-demo">
             {links}
-            {loginOutButton}
+            <LoginOutComponent user={user}/>
           </ul>
         </div>
       </nav>
@@ -77,5 +60,24 @@ NavLinkComponent = React.createClass({
         </a>
       </li>
     );
+  }
+});
+
+LoginOutComponent = React.createClass({
+  render() {
+    const className = "waves-effect waves-light btn";
+    if (this.props.user) {
+      return (
+        <li onClick={logout}>
+          <a className={className}>Logout</a>
+        </li>
+      );
+    } else {
+      return (
+        <li onClick={login}>
+          <a className={className}>Login</a>
+        </li>
+      );
+    }
   }
 });
