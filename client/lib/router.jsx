@@ -1,12 +1,8 @@
 FlowRouter.route("/", {
   name: "home",
   action: function(params, queryParams) {
-    // ReactLayout.render(MainLayout, {
-    //   content: <WelcomeComponent name="123" />
-    // });
-    // lock.show();
     ReactLayout.render(MainLayout, {
-      content: <WelcomeComponent/>
+      content: <WelcomeComponent />
     });
   }
 });
