@@ -11,13 +11,11 @@ MainLayout = React.createClass({
     return (
       <div>
         <NavigationComponent user={this.data.user} />
-        <body>
-          <main>
-            <div className="container">
-              {content}
-            </div>
-          </main>
-        </body>
+        <main>
+          <div className="container">
+            {content}
+          </div>
+        </main>
         <FooterComponent />
       </div>
     );
