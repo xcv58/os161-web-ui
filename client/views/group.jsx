@@ -108,10 +108,9 @@ GroupInfoComponent = React.createClass({
 CreateJoinGroupComponent = React.createClass({
   mixins: [MeteorCallMixin],
   componentDidMount() {
-    const {params, queryParams} = FlowRouter.current();
-    const {groupname, token} = queryParams;
+    const [groupname, token] = this.props.queryParams;
     if (groupname && token) {
-      this.callJoinGroup(groupname, token);
+      this.callJoinGroup(groupname, token, true);
     }
   },
   createGroup() {
@@ -161,7 +160,7 @@ CreateJoinGroupComponent = React.createClass({
       }
     });
   },
-  callJoinGroup(groupname, token) {
+  callJoinGroup(groupname, token, redirect) {
     try {
       check({name: groupname}, GroupNameSchema);
       check({token: token}, GroupTokenSchema);
@@ -171,12 +170,16 @@ CreateJoinGroupComponent = React.createClass({
     }
 
     this.clicked();
+    Materialize.toast(`Joining ${groupname}!`, 5000, "green");
     Meteor.call("joinGroup", groupname, token, (err, res) => {
       this.reset();
       if (err) {
         console.log(err);
         Materialize.toast(`${err.reason}`, 5000, "red");
       } else {
+        if (redirect) {
+          FlowRouter.go("/profiel");
+        }
         Materialize.toast(`Join group ${groupname}!`, 5000, "green");
       }
     });
@@ -210,6 +213,17 @@ CreateJoinGroupComponent = React.createClass({
 
 GroupComponent = React.createClass({
   mixins: [ReactMeteorData],
+  checkUrl(group) {
+    const {params, queryParams} = FlowRouter.current();
+    const {groupname, token} = queryParams;
+    if (groupname && token) {
+      if (group) {
+        FlowRouter.go("/profile");
+        Materialize.toast("You already in a group!", 5000, "red");
+      }
+    }
+    return [groupname, token];
+  },
   getMeteorData() {
     const user = this.props.user;
     const data = {ready: false};
@@ -229,10 +243,12 @@ GroupComponent = React.createClass({
       );
     }
     const user = this.props.user;
+
+    const queryParams = this.checkUrl(this.data.group);
     if (this.data.group) {
       return <GroupInfoComponent group={this.data.group} />
     } else {
-      return <CreateJoinGroupComponent user={user}/>
+      return <CreateJoinGroupComponent user={user} queryParams={queryParams} />
     }
   }
 });
